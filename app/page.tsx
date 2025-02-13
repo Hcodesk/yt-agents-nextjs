@@ -1,101 +1,136 @@
-import Image from "next/image";
+"use client"
+
+import { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import TranscriptionViewer from "../components/TranscriptionViewer"
+import VideoDetails from "@/components/videoDetails"
+import AIChatbot from "../components/AIChatbot"
+import ChatHistorySidebar from "../components/ChatHistorySidebar"
+import { useVideoStore } from "../store/videoStore"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Settings2 } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [videoUrl] = useState("https://www.youtube.com/watch?v=example")
+  const [transcription] = useState(`Voici la transcription de la vidéo...
+  
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`)
+
+  const { setVideoDetails } = useVideoStore()
+  const [model, setModel] = useState("gpt-3.5-turbo")
+  const [apiKey, setApiKey] = useState("")
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false)
+  const [input, setInput] = useState("")
+
+  useEffect(() => {
+    setVideoDetails({
+      title: "Sample YouTube Video",
+      duration: "10:30",
+      views: 1234567,
+      thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    })
+  }, [setVideoDetails])
+
+  const handleApiKeySubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Here you would typically validate and store the API key securely
+    console.log("API Key updated:", apiKey)
+    setIsApiKeyModalOpen(false)
+  }
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle chat submission logic here
+    console.log("Chat submitted:", input)
+    setInput("")
+  }
+
+  return (
+    <div className="flex h-screen">
+      <ChatHistorySidebar />
+      <main className="flex-1 overflow-auto">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="mb-6 flex justify-between items-center">
+            <h1 className="text-2xl font-bold">YouAgent</h1>
+            <div className="flex items-center gap-2">
+              <Select value={model} onValueChange={setModel}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
+                  <SelectItem value="gpt-4">GPT-4</SelectItem>
+                  <SelectItem value="claude-v1">Claude v1</SelectItem>
+                </SelectContent>
+              </Select>
+              <Dialog open={isApiKeyModalOpen} onOpenChange={setIsApiKeyModalOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Settings2 className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Change API Key</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleApiKeySubmit} className="space-y-4">
+                    <div>
+                      <Label htmlFor="apiKey">API Key</Label>
+                      <Input
+                        id="apiKey"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        type="password"
+                        placeholder="Enter your API key"
+                      />
+                    </div>
+                    <Button type="submit">Save Changes</Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          <Card className="mb-6">
+            <div className="p-4">
+              <Input value={videoUrl} disabled className="bg-gray-100 text-gray-600 mb-4" />
+              <VideoDetails />
+            </div>
+          </Card>
+
+          <Card className="mb-6">
+            <div className="p-4">
+              <h2 className="text-xl font-semibold mb-4">Transcription</h2>
+              <TranscriptionViewer transcription={transcription} />
+            </div>
+          </Card>
+
+          <div className="mb-6">
+            <AIChatbot model={model} />
+          </div>
+
+          <div className="mb-6">
+            <form onSubmit={handleChatSubmit} className="flex gap-2">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask a question about the video..."
+                className="flex-grow"
+              />
+              <Button type="submit">Send</Button>
+            </form>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
+
