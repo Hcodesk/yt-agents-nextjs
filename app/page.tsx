@@ -16,13 +16,13 @@ import { Label } from "@/components/ui/label"
 
 export default function Home() {
   const [videoUrl] = useState("https://www.youtube.com/watch?v=example")
-  const [transcription] = useState(`Voici la transcription de la vidéo...
+/*   const [transcription] = useState(`Voici la transcription de la vidéo...
   
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`)
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`) */
 
   const { setVideoDetails } = useVideoStore()
   const [model, setModel] = useState("gpt-3.5-turbo")
@@ -109,7 +109,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
           <Card className="mb-6">
             <div className="p-4">
               <h2 className="text-xl font-semibold mb-4">Transcription</h2>
-              <TranscriptionViewer transcription={transcription} />
+              <TranscriptionViewer />
             </div>
           </Card>
 
