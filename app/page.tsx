@@ -1,136 +1,73 @@
-"use client"
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-import { useState, useEffect } from "react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import TranscriptionViewer from "../components/TranscriptionViewer"
-import VideoDetails from "@/components/videoDetails"
-import AIChatbot from "../components/AIChatbot"
-import ChatHistorySidebar from "../components/ChatHistorySidebar"
-import { useVideoStore } from "../store/videoStore"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Settings2 } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-
-export default function Home() {
-  const [videoUrl] = useState("https://www.youtube.com/watch?v=example")
-/*   const [transcription] = useState(`Voici la transcription de la vidéo...
-  
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`) */
-
-  const { setVideoDetails } = useVideoStore()
-  const [model, setModel] = useState("gpt-3.5-turbo")
-  const [apiKey, setApiKey] = useState("")
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false)
-  const [input, setInput] = useState("")
-
-  useEffect(() => {
-    setVideoDetails({
-      title: "Sample YouTube Video",
-      duration: "10:30",
-      views: 1234567,
-      thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-    })
-  }, [setVideoDetails])
-
-  const handleApiKeySubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically validate and store the API key securely
-    console.log("API Key updated:", apiKey)
-    setIsApiKeyModalOpen(false)
-  }
-
-  const handleChatSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle chat submission logic here
-    console.log("Chat submitted:", input)
-    setInput("")
-  }
-
+export default function LandingPage() {
   return (
-    <div className="flex h-screen">
-      <ChatHistorySidebar />
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="mb-6 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">YouAgent</h1>
-            <div className="flex items-center gap-2">
-              <Select value={model} onValueChange={setModel}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-                  <SelectItem value="gpt-4">GPT-4</SelectItem>
-                  <SelectItem value="claude-v1">Claude v1</SelectItem>
-                </SelectContent>
-              </Select>
-              <Dialog open={isApiKeyModalOpen} onOpenChange={setIsApiKeyModalOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Settings2 className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Change API Key</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleApiKeySubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="apiKey">API Key</Label>
-                      <Input
-                        id="apiKey"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        type="password"
-                        placeholder="Enter your API key"
-                      />
-                    </div>
-                    <Button type="submit">Save Changes</Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50/50 flex items-center justify-center">
+      {/* Background pattern */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] bg-[size:6rem_4rem]" />
+
+      <section className="w-full px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 flex flex-col items-center space-y-10 text-center">
+        {/* Hero content */}
+        <header className="space-y-6">
+          <h1 className="text-5xl font-bold tracking-tight sm:text-7xl bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+            AI Agent Assistant
+          </h1>
+          <p className="max-w-[600px] text-lg text-gray-600 md:text-xl/relaxed xl:text-2xl/relaxed">
+            Meet your new AI chat companion that goes beyond conversation - it
+            can actually get things done!
+            <br />
+            <span className="text-gray-400 text-sm">
+              Powered by IBM&apos;s WxTools & your favourite LLM&apos;s.
+            </span>
+          </p>
+        </header>
+
+        {/* CTA Button */}
+        <SignedIn>
+          <Link href="/dashboard">
+            <button className="group relative inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-gray-900 to-gray-800 rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+              Get Started
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gray-900/20 to-gray-800/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+          </Link>
+        </SignedIn>
+
+        <SignedOut>
+          <SignInButton
+            mode="modal"
+            fallbackRedirectUrl={"/dashboard"}
+            forceRedirectUrl={"/dashboard"}
+          >
+            <button className="group relative inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-white bg-gradient-to-r from-gray-900 to-gray-800 rounded-full hover:from-gray-800 hover:to-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+              Sign Up
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gray-900/20 to-gray-800/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+          </SignInButton>
+        </SignedOut>
+
+        {/* Features grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 pt-8 max-w-3xl mx-auto">
+          {[
+            { title: "Fast", description: "Real-time streamed responses" },
+            {
+              title: "Modern",
+              description: "Next.js 15, Tailwind CSS, Convex, Clerk",
+            },
+            { title: "Smart", description: "Powered by Your Favourite LLM's" },
+          ].map(({ title, description }) => (
+            <div key={title} className="text-center">
+              <div className="text-2xl font-semibold text-gray-900">
+                {title}
+              </div>
+              <div className="text-sm text-gray-600 mt-1">{description}</div>
             </div>
-          </div>
-
-          <Card className="mb-6">
-            <div className="p-4">
-              <Input value={videoUrl} disabled className="bg-gray-100 text-gray-600 mb-4" />
-              <VideoDetails />
-            </div>
-          </Card>
-
-          <Card className="mb-6">
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Transcription</h2>
-              <TranscriptionViewer />
-            </div>
-          </Card>
-
-          <div className="mb-6">
-            <AIChatbot model={model} />
-          </div>
-
-          <div className="mb-6">
-            <form onSubmit={handleChatSubmit} className="flex gap-2">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a question about the video..."
-                className="flex-grow"
-              />
-              <Button type="submit">Send</Button>
-            </form>
-          </div>
+          ))}
         </div>
-      </main>
-    </div>
-  )
+      </section>
+    </main>
+  );
 }
-
